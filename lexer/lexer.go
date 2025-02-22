@@ -1,4 +1,11 @@
-package lexer
+package Lexer
+
+import (
+	"fmt"
+	"log"
+	"strconv"
+	"unicode"
+)
 
 const (
 	ADD = iota
@@ -15,15 +22,81 @@ type Token struct {
 	NumValue  interface{}
 }
 
-func lexer(input string) []Token {
+func Lexer(input []rune) []Token {
 	pos := 0
-	tokens := make([]Token, len(input))
+	tokens := make([]Token, 0)
 
 	for pos < len(input) {
-		switch input[pos] {
+		SkipSpace(&pos, input)
 
+		if isDigit(input[pos]) {
+			stapos := pos
+			var endpos int
+			for {
+				if !NextPos(&pos, input) {
+					endpos = pos
+					break
+				}
+				if !(isDigit(input[pos])) {
+					endpos = pos
+					break
+				}
+			}
+
+			numstr := string(input[stapos:endpos])
+
+			num, err := strconv.Atoi(numstr)
+
+			if err != nil {
+				log.Println("str = ", numstr)
+				panic("stringからnumに変換できませんでした")
+			}
+			tokens = append(tokens, Token{TokenType: INT_NUM, NumValue: num})
+			continue
 		}
+
+		switch input[pos] {
+		case '+':
+			tokens = append(tokens, Token{TokenType: ADD})
+		case '-':
+			tokens = append(tokens, Token{TokenType: SUB})
+		case '*':
+			tokens = append(tokens, Token{TokenType: MUL})
+		case '/':
+			tokens = append(tokens, Token{TokenType: DIV})
+		case '(':
+			tokens = append(tokens, Token{TokenType: LP})
+		case ')':
+			tokens = append(tokens, Token{TokenType: RP})
+		}
+
+		NextPos(&pos, input)
 	}
 
-	return
+	return tokens
+}
+
+func SkipSpace(pos *int, input []rune) {
+	for unicode.IsSpace([]rune(input)[*pos]) {
+		NextPos(pos, input)
+	}
+}
+
+func NextPos(pos *int, input []rune) bool {
+	*pos += 1
+	fmt.Println(*pos)
+
+	if *pos < len(input) {
+		return true
+	} else {
+		return false
+	}
+}
+
+func isDigit(ch rune) bool {
+	if '1' <= ch && ch <= '9' {
+		return true
+	} else {
+		return false
+	}
 }
