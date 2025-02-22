@@ -15,6 +15,7 @@ const (
 	LP
 	RP
 	INT_NUM
+	INVALID
 )
 
 type Token struct {
@@ -68,6 +69,9 @@ func Lexer(input []rune) []Token {
 			tokens = append(tokens, Token{TokenType: LP})
 		case ')':
 			tokens = append(tokens, Token{TokenType: RP})
+		default:
+			tokens = append(tokens, Token{TokenType: INVALID})
+
 		}
 
 		NextPos(&pos, input)
