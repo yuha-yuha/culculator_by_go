@@ -2,10 +2,16 @@ package main
 
 import (
 	"calculator/Lexer"
-	"log"
+	"calculator/Parser"
+	"fmt"
 )
 
 func main() {
-	tokens := Lexer.Lexer([]rune("(1 / 2) * 5"))
-	log.Println(tokens)
+
+	tokens := Lexer.Lexer([]rune("(5 + 4) * 2"))
+	fmt.Println(tokens)
+	p := Parser.NewParser(tokens)
+	ast := p.Parse()
+	Parser.NodeMap(ast)
+
 }
