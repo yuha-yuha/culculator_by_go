@@ -1,7 +1,6 @@
 package Lexer
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 	"unicode"
@@ -21,6 +20,7 @@ const (
 type Token struct {
 	TokenType int
 	NumValue  interface{}
+	Ch        string
 }
 
 func Lexer(input []rune) []Token {
@@ -52,25 +52,25 @@ func Lexer(input []rune) []Token {
 				log.Println("str = ", numstr)
 				panic("stringからnumに変換できませんでした")
 			}
-			tokens = append(tokens, Token{TokenType: INT_NUM, NumValue: num})
+			tokens = append(tokens, Token{TokenType: INT_NUM, NumValue: num, Ch: numstr})
 			continue
 		}
 
 		switch input[pos] {
 		case '+':
-			tokens = append(tokens, Token{TokenType: ADD})
+			tokens = append(tokens, Token{TokenType: ADD, Ch: "+"})
 		case '-':
-			tokens = append(tokens, Token{TokenType: SUB})
+			tokens = append(tokens, Token{TokenType: SUB, Ch: "-"})
 		case '*':
-			tokens = append(tokens, Token{TokenType: MUL})
+			tokens = append(tokens, Token{TokenType: MUL, Ch: "*"})
 		case '/':
-			tokens = append(tokens, Token{TokenType: DIV})
+			tokens = append(tokens, Token{TokenType: DIV, Ch: "/"})
 		case '(':
-			tokens = append(tokens, Token{TokenType: LP})
+			tokens = append(tokens, Token{TokenType: LP, Ch: "("})
 		case ')':
-			tokens = append(tokens, Token{TokenType: RP})
+			tokens = append(tokens, Token{TokenType: RP, Ch: ")"})
 		default:
-			tokens = append(tokens, Token{TokenType: INVALID})
+			tokens = append(tokens, Token{TokenType: INVALID, Ch: string(input[pos])})
 
 		}
 
@@ -88,7 +88,6 @@ func SkipSpace(pos *int, input []rune) {
 
 func NextPos(pos *int, input []rune) bool {
 	*pos += 1
-	fmt.Println(*pos)
 
 	if *pos < len(input) {
 		return true
@@ -98,7 +97,7 @@ func NextPos(pos *int, input []rune) bool {
 }
 
 func isDigit(ch rune) bool {
-	if '1' <= ch && ch <= '9' {
+	if '0' <= ch && ch <= '9' {
 		return true
 	} else {
 		return false
