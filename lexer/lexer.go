@@ -19,7 +19,7 @@ const (
 
 type Token struct {
 	TokenType int
-	NumValue  interface{}
+	NumValue  int
 	Ch        string
 }
 
